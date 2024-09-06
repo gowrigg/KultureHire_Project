@@ -1,0 +1,166 @@
+1. What is the gender distribution of respondents from India?
+
+select Gender, count(Gender) as Count
+from genzaspirationdata.standardized
+where Country = 'India'
+group by Gender;
+
+2. What percentage of respondents from India are interested in education abroad and sponsorship?
+
+SELECT 
+    Gender,
+    COUNT(*) AS count_of_data,
+    (COUNT(*) * 100.0 / (SELECT COUNT(*) 
+                         FROM genzaspirationdata.standardized 
+                         WHERE Country = 'India')) AS Percentage_of_Interest
+FROM genzaspirationdata.standardized
+WHERE Country = 'India'
+    AND `Idea about pursuing Higher Education / Post Graduation` = 'Yes'
+GROUP BY Gender;
+
+
+3. What are the 6 top influences on career aspirations for respondents in India?
+
+select distinct `Factors that Most Influencial in life`, country
+from genzaspirationdata.standardized
+WHERE country ='india'
+limit 6;
+
+4. How do career aspiration influences vary by gender in India?
+
+select Gender, count(`Factors that Most Influencial in life`) as count_of_influencers
+from genzaspirationdata.standardized
+WHERE country ='india'
+group by Gender;
+
+
+5. What percentage of respondents are willing to work for a company for at least 3 years?
+
+SELECT Count(`Likelyhood in one company for 3 years and more`) as Total_Likelyhood
+FROM genzaspirationdata.standardized
+where `Likelyhood in one company for 3 years and more` = 'Yes';
+
+
+6. How many respondents prefer to work for socially impactful companies?
+
+select count(`Is that company mission impact on social environment so rate?`) as Total_responses
+from genzaspirationdata.standardized
+where `Is that company mission impact on social environment so rate?` between 7 and 10;
+
+7. How does the preference for socially impactful companies vary by gender?
+
+SELECT gender, `Is that company mission impact on social environment so rate?`, COUNT(*) AS count_of_ratings
+FROM genzaspirationdata.standardized
+WHERE `Is that company mission impact on social environment so rate?` BETWEEN 1 AND 10
+GROUP BY gender, `Is that company mission impact on social environment so rate?`
+ORDER BY gender, `Is that company mission impact on social environment so rate?`;
+
+
+8. What is the distribution of minimum expected salary in the first three years among respondents?
+
+select `First 3 years of job, your expected salary for monthly?`, count(*) as Total_respondents_salary_expectations
+from genzaspirationdata.standardized
+Group by `First 3 years of job, your expected salary for monthly?`
+Order by `First 3 years of job, your expected salary for monthly?`;
+
+
+9. What is the expected minimum monthly salary in hand?
+
+select `Expected salary of when you starting your career (Monthly)`, count(*) as Total_respondents_salary_expectations
+from genzaspirationdata.standardized
+group by `Expected salary of when you starting your career (Monthly)`
+order by `Expected salary of when you starting your career (Monthly)`;
+
+10. What percentage of respondents prefer remote working?
+
+select 
+    `What is the most preferred working environment for you.`, 
+    count(*) as Total_respondents_salary_expectations,
+    (count(*) * 100.0 / (select count(*) from genzaspirationdata.standardized)) as Percentage
+from 
+    genzaspirationdata.standardized
+where 
+    `What is the most preferred working environment for you.` like 'Fully Remote%'
+group by 
+    `What is the most preferred working environment for you.`
+order by 
+    `What is the most preferred working environment for you.`;
+
+11. What is the preferred number of daily work hours?
+
+select `How many hours you would willing to work in day`, count(*) as Total_respondents_salary_expectations
+from genzaspirationdata.standardized
+group by `How many hours you would willing to work in day`
+order by `How many hours you would willing to work in day`;
+
+12. What are the common work frustrations among respondents?
+
+select `What would frustrate you at work ?`
+from genzaspirationdata.standardized
+group by `What would frustrate you at work ?`;
+
+
+13. How does the need for work-life balance interventions vary by gender?
+
+select Gender, `Which of the below Employers would you work with.`
+from genzaspirationdata.standardized
+group by Gender, `Which of the below Employers would you work with.`
+order by Gender, `Which of the below Employers would you work with.`;
+
+
+14. How many respondents are willing to work under an abusive manager?
+
+select `Would you work under a manager who uses abusive words`, count(*) as total_respondents
+from genzaspirationdata.standardized
+where `Would you work under a manager who uses abusive words` like 'Yes'
+group by `Would you work under a manager who uses abusive words`;
+
+
+15. What is the distribution of minimum expected salary after five years?
+
+select `5 years from now In your career, Expected salary in monthly`, count(*) as total_respondents
+from genzaspirationdata.standardized
+group by `5 years from now In your career, Expected salary in monthly`
+order by `5 years from now In your career, Expected salary in monthly`;
+
+
+16. What are the remote working preferences by gender?
+
+select Gender, `What is the most preferred working environment for you.`, count(`What is the most preferred working environment for you.`) as count_of_respondant
+from genzaspirationdata.standardized
+where `What is the most preferred working environment for you.` like '%Remote%'
+group by Gender, `What is the most preferred working environment for you.`
+order by Gender;
+
+17. What are the top work frustrations for each gender?
+
+SELECT Gender, `What would frustrate you at work ?`, total_respondents
+FROM (
+    SELECT 
+        Gender,
+        `What would frustrate you at work ?`,
+        COUNT(*) AS total_respondents,
+        ROW_NUMBER() OVER (PARTITION BY Gender ORDER BY COUNT(*) DESC) AS RN
+    FROM genzaspirationdata.standardized
+    GROUP BY Gender, `What would frustrate you at work ?`
+) sub
+WHERE RN <=3
+ORDER BY Gender;
+
+
+18. What factors boost work happiness and productivity for respondents?
+
+select `What would make you happier and productive at work`, count(*) as total_respondents
+from genzaspirationdata.standardized
+group by `What would make you happier and productive at work`
+order by `What would make you happier and productive at work`;
+
+
+19. What percentage of respondents need sponsorship for education abroad?
+
+select `Idea about pursuing Higher Education / Post Graduation`, (count(*) * 100.0 / (select count(*) from genzaspirationdata.standardized)) as Percentage
+from genzaspirationdata.standardized
+where `Idea about pursuing Higher Education / Post Graduation` = 'Need a sponsor to support'
+group by `Idea about pursuing Higher Education / Post Graduation`
+order by `Idea about pursuing Higher Education / Post Graduation`;
+
