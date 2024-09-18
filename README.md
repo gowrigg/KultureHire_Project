@@ -1,4 +1,4 @@
-# KultureHire_Project
+# KultureHire_Data analyst Project
 End to end ETL
 
 1. Objective:
